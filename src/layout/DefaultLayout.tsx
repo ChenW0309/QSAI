@@ -13,6 +13,7 @@ const DefaultLayout = () => {
 
   const [sidebarDesktopOpen, setSidebarDesktopOpen] = useState(false);
   const [sidebarMobileOpen, setSidebarMobileOpen] = useState(false);
+  const [imageSize, setImageSize] = useState('5vh');
 
   useEffect(() => {
     if (isConnected) {
@@ -21,6 +22,23 @@ const DefaultLayout = () => {
       disconnectFromWallet();
     }
   }, [isConnected, isDisconnected]);
+
+  useEffect(() => {
+    const updateImageSize = () => {
+      if (window.innerWidth > window.innerHeight) {
+        setImageSize('20vh');
+      } else {
+        setImageSize('20vw');
+      }
+    };
+
+    updateImageSize();
+    window.addEventListener('resize', updateImageSize);
+
+    return () => {
+      window.removeEventListener('resize', updateImageSize);
+    };
+  }, []);
 
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
@@ -39,14 +57,12 @@ const DefaultLayout = () => {
           {/* <!-- ===== Main Content Start ===== --> */}
           <main className='min-h-[calc(100vh-80px)]'>
             <div className="min-h-full flex relative">
-              {/* <img
-                src='https://framerusercontent.com/images/nw1bTqpgHNELBRa4PB1qRVXgsQg.png'
-                alt='jewel'
-                className='absolute w-50 rotate-45 bottom-25 left-0' /> */}
               <img
                 src='https://framerusercontent.com/images/nw1bTqpgHNELBRa4PB1qRVXgsQg.png'
                 alt='jewel'
-                className='absolute w-50 -rotate-45 bottom-25 right-0 z-99' />
+                className='absolute -rotate-45 bottom-15 right-0 z-0'
+                style={{ width: imageSize }} // Dynamically adjust width and height
+              />
               <Outlet />
             </div>
           </main>
