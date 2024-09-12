@@ -23,7 +23,7 @@ if (!projectId) {
 const metadata = {
   name: 'Quantum Sphere AI',
   description: 'A platform for Cloud Service',
-  url: 'http://localhost:5173',
+  url: 'https://qsai-nu.vercel.app/',
   icons: [''],
 }
 
