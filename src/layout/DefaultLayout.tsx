@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useAccount } from 'wagmi'
 import { Outlet } from 'react-router-dom';
-import { useAccount } from 'wagmi';
 
 import Header from '../common/Header';
 import Sidebar from '../common/Sidebar';
@@ -18,7 +18,8 @@ const DefaultLayout = () => {
   useEffect(() => {
     if (isConnected) {
       connectToWallet();
-    } else if (isDisconnected) {
+    }
+    if (isDisconnected) {
       disconnectFromWallet();
     }
   }, [isConnected, isDisconnected]);

@@ -5,7 +5,7 @@ const useWalletStore = create(persist(
   (set) => ({
     isConnectedToWallet: false,
     connectToWallet: () => set({ isConnectedToWallet: true }),
-    disconnectFromWallet: () => set({ isConnectedToWallet: false })
+    disconnectFromWallet: () => set({ isConnectedToWallet: false }),
   }),
   {
     name: 'wallet-storage',

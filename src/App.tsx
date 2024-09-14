@@ -1,38 +1,17 @@
 import { WagmiProvider } from 'wagmi';
 import { createWeb3Modal } from '@web3modal/wagmi/react'
-import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
-import { arbitrum, mainnet } from 'viem/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 import routes from './routes';
 import { useWalletStore } from './store';
+import { metadata, projectId, config } from './lib/config';
 
 import DefaultLayout from './layout/DefaultLayout';
 import ConnectWallet from './components/ConnectWallet';
 
 const queryClient = new QueryClient();
-
-const projectId = import.meta.env.VITE_PROJECT_ID as string;
-
-if (!projectId) {
-  throw new Error("Please provide project Id");
-}
-
-const metadata = {
-  name: 'Quantum Sphere AI',
-  description: 'A platform for Cloud Service',
-  url: 'https://qsai-nu.vercel.app/',
-  icons: [''],
-}
-
-const chains = [mainnet, arbitrum] as const;
-const config = defaultWagmiConfig({
-  chains,
-  projectId,
-  metadata
-})
 
 createWeb3Modal({
   metadata,
