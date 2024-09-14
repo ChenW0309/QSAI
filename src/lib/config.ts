@@ -1,18 +1,24 @@
+import { http } from 'wagmi';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
-import { arbitrum, mainnet } from 'viem/chains';
+import { mainnet } from 'wagmi/chains';
 
 export const projectId = import.meta.env.VITE_PROJECT_ID as string;
 
 export const metadata = {
   name: 'Quantum Sphere AI',
   description: 'A platform for Cloud Service',
-  url: 'https://qsai-nu.vercel.app',
+  url: 'http://localhost:5173',
   icons: [''],
 }
 
-export const chains = [mainnet, arbitrum] as const;
 export const config = defaultWagmiConfig({
-  chains,
+  chains: [
+    mainnet,
+  ],
   projectId,
   metadata,
-})
+  transports: {
+    [mainnet.id]: http(''),
+  }
+}
+)

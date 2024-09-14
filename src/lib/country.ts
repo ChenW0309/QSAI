@@ -172,4 +172,15 @@ const CloudGPUCountries: Country[] = [
   }
 ]
 
-export { SharedCPUCountries, BareMetalCountries, CloudGPUCountries };
+const NetworkNames: Country[] = [
+  {
+    title: 'Ethereum (ERC20)',
+    flag: 'https://api.dcicloud.ai/assets/svg/us.svg'
+  },
+  {
+    title: 'USDT (ERC20)',
+    flag: 'https://api.dcicloud.ai/assets/svg/us.svg'
+  },
+]
+
+export { SharedCPUCountries, BareMetalCountries, CloudGPUCountries, NetworkNames };

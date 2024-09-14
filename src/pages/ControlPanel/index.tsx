@@ -1,12 +1,8 @@
-import { useBalance, useAccount } from "wagmi";
-import { useMachineStore } from "../../store";
+import { useMachineStore, useWalletStore } from "../../store";
 
 const ControlPanel = () => {
-  const { address } = useAccount();
-  const balance = useBalance({
-    address: address,
-  });
 
+  const { balance } = useWalletStore() as { balance: number };
   const { machines } = useMachineStore() as { machines: any[] };
 
   return (
@@ -15,7 +11,7 @@ const ControlPanel = () => {
       <div className="w-fit rounded-2xl shadow-[0_0_10px_rgba(150,75,250,0.8)] mt-5 flex flex-col px-5 py-5">
         <span className="text-md font-medium">Current Balance</span>
         <div className="flex mt-2">
-          <span className="text-2xl text-white">${parseFloat(String(balance.data?.value ?? "0")).toFixed(2)}</span>
+          <span className="text-2xl text-white">${parseFloat(String(balance * 2357.76)).toFixed(2)}</span>
           <button
             className="flex justify-center items-center rounded-lg bg-[#7e33e0] px-6 py-1 ml-5 text-sm text-white transition-transform duration-300 ease-in-out transform hover:scale-90"
           >

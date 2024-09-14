@@ -5,6 +5,7 @@ import BareMetal from "../pages/BareMetal";
 import CloudGPU from "../pages/CloudGPU";
 import Proxy from "../pages/Proxy";
 import UserAid from "../pages/UserAid";
+import Deposit from "../pages/Deposit";
 
 const coreRoutes = [
   {
@@ -41,6 +42,11 @@ const coreRoutes = [
     path: '/user-aid',
     title: 'User Aid',
     component: UserAid,
+  },
+  {
+    path: '/deposit/:id',
+    title: 'Deposit',
+    component: Deposit,
   },
 ];
 

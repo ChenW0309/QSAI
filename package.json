@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.55.4",
-    "@web3modal/wagmi": "^5.1.7",
+    "@web3modal/wagmi": "^5.1.8",
     "apexcharts": "^3.41.0",
     "headlessui": "^0.0.0",
     "jsvectormap": "^1.5.3",

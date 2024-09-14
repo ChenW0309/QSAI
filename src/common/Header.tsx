@@ -1,6 +1,9 @@
-import { useAccount } from "wagmi";
+import { Connector, useAccount, useConnect } from "wagmi";
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useWalletStore } from "../store";
+
+import TopUpDialog from "../components/TopUpDialog";
+import { useEffect, useState } from "react";
 
 const Header = (props: {
   sidebarDesktopOpen: string | boolean | undefined;
@@ -8,9 +11,26 @@ const Header = (props: {
   setSidebarMobileOpen: (arg0: boolean) => void;
 }) => {
 
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
+  const { connectAsync, connectors } = useConnect();
   const { open: openModal } = useWeb3Modal();
-  const { isConnectedToWallet } = useWalletStore() as { isConnectedToWallet: boolean };
+  const { isConnectedToWallet, balance } = useWalletStore() as { isConnectedToWallet: boolean, balance: number };
+
+  const [isOpenTopUpModal, setOpenTopUpModal] = useState<boolean>(false);
+
+  const handleWalletConnect = async (connector: Connector) => {
+    await connectAsync({ connector: connector });
+  }
+
+  useEffect(() => {
+    if (isConnectedToWallet) {
+      connectors.map((matchedConnector) => {
+        if (matchedConnector.id === connector?.id) {
+          handleWalletConnect(matchedConnector);
+        }
+      })
+    }
+  }, [isConnectedToWallet]);
 
   return (
     <header className="sticky top-0 z-999 flex w-full bg-gradient-to-r from-[#180938] to-[#321364]">
@@ -46,10 +66,11 @@ const Header = (props: {
           <div
             className="flex justify-center items-center rounded-full bg-[#57239a] px-6 py-1 text-md text-white mr-3"
           >
-            {/* ${parseFloat(String(balance.data?.formatted ?? "0")).toFixed(2)} */}
+            ${parseFloat(String(balance * 2357.76)).toFixed(2)}
           </div>
           <button
             className="flex justify-center items-center rounded-full bg-[#7e33e0] px-6 py-1 text-md text-white transition-transform duration-300 ease-in-out transform hover:scale-90"
+            onClick={() => { setOpenTopUpModal(true) }}
           >
             Top Up
           </button>
@@ -64,6 +85,10 @@ const Header = (props: {
           </button>
         </div>}
       </div>
+      <TopUpDialog
+        isOpen={isOpenTopUpModal}
+        onClose={() => { setOpenTopUpModal(false) }}
+      />
     </header>
   );
 };

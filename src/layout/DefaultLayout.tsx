@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 import Header from '../common/Header';
 import Sidebar from '../common/Sidebar';
+
 import { useWalletStore } from '../store';
 
 const DefaultLayout = () => {
