@@ -118,8 +118,8 @@ const TopUpDialog = ({ isOpen, onClose }: {
               </div>
               <div className="mt-10">
                 <button
-                  disabled={network === null || price === 0}
-                  className={`flex w-full justify-center items-center rounded-md py-2 px-6 font-medium transition-transform duration-300 ease-in-out transform ${network === null || price === 0
+                  disabled={network === null || price === 0 || price < 1}
+                  className={`flex w-full justify-center items-center rounded-md py-2 px-6 font-medium transition-transform duration-300 ease-in-out transform ${network === null || price === 0 || price < 1
                     ? 'bg-[#3d196c] cursor-not-allowed'
                     : 'bg-[#7e33e0] text-white hover:shadow-[0_0_20px_rgba(126,51,224,0.8)] animate-gradient hover:animate-none'
                     }`}
