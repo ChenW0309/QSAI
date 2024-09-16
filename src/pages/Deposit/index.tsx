@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useAccount, useSendTransaction, useWriteContract, useReadContract } from "wagmi";
+import { useSendTransaction, useWriteContract, useSwitchChain } from "wagmi";
 import { useLocation, useNavigate } from "react-router-dom";
-import { parseEther, parseUnits } from 'viem'
+import { parseEther } from 'viem'
+import { sepolia } from "viem/chains";
 import toast from "react-hot-toast";
-import { abi } from "../../lib/config";
 
 import { useWalletStore } from "../../store";
-
 type Network = {
   title: string,
   icon: any
@@ -15,9 +14,9 @@ type Network = {
 const Deposit = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { address } = useAccount();
-  const { isPending: contractIsPending, isSuccess: contractIsSuccess, writeContractAsync } = useWriteContract();
-  const { isPending: transactionIsPending, isSuccess: transactionIsSuccess, sendTransaction } = useSendTransaction();
+  const { switchChainAsync } = useSwitchChain();
+  const { writeContractAsync } = useWriteContract();
+  const { isPending, isSuccess, sendTransaction } = useSendTransaction();
 
   const { balance, setBalance } = useWalletStore() as { balance: number; setBalance: (balance: number) => void };
 
@@ -49,27 +48,28 @@ const Deposit = () => {
     }
   ];
 
+  const fetchEthUsdRate = async () => {
+    const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+    const data = await response.json();
+    return data.ethereum.usd;
+  };
+
   const transferMoney = async () => {
     if (location.state.network === 0) {
-      sendTransaction({ to: import.meta.env.VITE_CLIENT_ADDRESS, value: parseEther((location.state.price / 2357.76).toString()) });
+      const convertRate = await fetchEthUsdRate();
+      sendTransaction({ to: import.meta.env.VITE_CLIENT_ADDRESS, value: parseEther((location.state.price / convertRate).toString()) });
     } else {
-      if (address) {
-        await writeContractAsync({
-          abi,
-          address: '0x6b175474e89094c44da98b954eedeac495271d0f',
-          functionName: 'transferFrom',
-          args: [
-            address,
-            import.meta.env.VITE_CLIENT_ADDRESS,
-            parseUnits((location.state.price * 10).toString(), 6)
-          ]
-        });
-      }
+      await switchChainAsync({ chainId: sepolia.id });
+      sendTransaction({
+        to: import.meta.env.VITE_CLIENT_ADDRESS,
+        value: parseEther(location.state.price.toString()),
+        chainId: sepolia.id
+      });
     }
   }
 
   useEffect(() => {
-    if (transactionIsSuccess || contractIsSuccess) {
+    if (isSuccess) {
       toast.success("Top Up completed successfully");
       let currentBalance = balance;
       if (location.state.network === 0) {
@@ -81,7 +81,7 @@ const Deposit = () => {
       }
       navigate("/");
     }
-  }, [transactionIsSuccess, contractIsSuccess]);
+  }, [isSuccess]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black z-9999">
@@ -165,7 +165,7 @@ const Deposit = () => {
 
               <div className="flex flex-col items-center mt-8 gap-4">
                 <span className="text-[#7e33e0]">Once you have completed the transfer, please click the button below.</span>
-                {!transactionIsPending ? <button
+                {!isPending ? <button
                   className={`flex w-full justify-center items-center rounded-md py-2 px-6 font-medium transition-transform duration-300 ease-in-out transform bg-[#7e33e0] text-white hover:shadow-[0_0_20px_rgba(126,51,224,0.8)] animate-gradient hover:animate-none}`}
                   onClick={() => {
                     transferMoney();
@@ -189,7 +189,7 @@ const Deposit = () => {
                 {location.state.network === 0 ? parseFloat((location.state.price / 2357.76).toString()).toString() + " " + "ETH" : location.state.price.toString() + " " + "USDT-ERC20"}
               </div>
               <div className="mt-5">
-                {!contractIsPending ? <button
+                {!isPending ? <button
                   className={`flex w-full justify-center items-center rounded-md py-2 px-6 font-medium transition-transform duration-300 ease-in-out transform bg-[#7e33e0] text-white hover:shadow-[0_0_20px_rgba(126,51,224,0.8)] animate-gradient hover:animate-none}`}
                   onClick={() => {
                     transferMoney();
