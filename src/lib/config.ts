@@ -1,6 +1,6 @@
 import { http } from 'wagmi';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
-import { mainnet, sepolia } from 'wagmi/chains';
+import { mainnet } from 'wagmi/chains';
 
 export const projectId = import.meta.env.VITE_PROJECT_ID as string;
 
@@ -13,13 +13,24 @@ export const metadata = {
 
 export const config = defaultWagmiConfig({
   chains: [
-    mainnet,
-    sepolia
+    mainnet
   ],
   projectId,
   metadata,
   transports: {
-    [mainnet.id]: http(''),
-    [sepolia.id]: http('')
+    [mainnet.id]: http('')
   }
 })
+
+export const abi = [
+  {
+    type: 'function',
+    name: 'transfer',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'recipient', type: 'address' },
+      { name: 'amount', type: 'uint256' },
+    ],
+    outputs: [{ type: 'bool' }],
+  },
+] as const

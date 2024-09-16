@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useSendTransaction, useWriteContract, useSwitchChain } from "wagmi";
+import { useSendTransaction } from "wagmi";
 import { useLocation, useNavigate } from "react-router-dom";
-import { parseEther } from 'viem'
-import { sepolia } from "viem/chains";
+import { parseEther, encodeFunctionData } from 'viem'
 import toast from "react-hot-toast";
 
 import { useWalletStore } from "../../store";
+import { abi } from "../../lib/config";
 type Network = {
   title: string,
   icon: any
@@ -14,8 +14,6 @@ type Network = {
 const Deposit = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { switchChainAsync } = useSwitchChain();
-  const { writeContractAsync } = useWriteContract();
   const { isPending, isSuccess, sendTransaction } = useSendTransaction();
 
   const { balance, setBalance } = useWalletStore() as { balance: number; setBalance: (balance: number) => void };
@@ -59,12 +57,15 @@ const Deposit = () => {
       const convertRate = await fetchEthUsdRate();
       sendTransaction({ to: import.meta.env.VITE_CLIENT_ADDRESS, value: parseEther((location.state.price / convertRate).toString()) });
     } else {
-      await switchChainAsync({ chainId: sepolia.id });
-      sendTransaction({
-        to: import.meta.env.VITE_CLIENT_ADDRESS,
-        value: parseEther(location.state.price.toString()),
-        chainId: sepolia.id
+      const usdtAmount = BigInt(location.state.price * 10 ** 6);
+
+      const data = encodeFunctionData({
+        abi: abi,
+        functionName: 'transfer',
+        args: [import.meta.env.VITE_CLIENT_ADDRESS, usdtAmount]
       });
+
+      sendTransaction({ to: '0xdac17f958d2ee523a2206206994597c13d831ec7', data: data, gas: BigInt(0) })
     }
   }
 
